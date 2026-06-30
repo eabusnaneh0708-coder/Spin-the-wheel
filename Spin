@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>10 Option Spin Wheel</title>
+
+<style>
+body{
+    margin:0;
+    background:#1f1f1f;
+    color:white;
+    font-family:Arial,sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+h1{
+    margin:20px;
+}
+
+canvas{
+    background:white;
+    border-radius:50%;
+}
+
+button{
+    margin:20px;
+    padding:12px 30px;
+    font-size:20px;
+    cursor:pointer;
+}
+
+#winner{
+    font-size:30px;
+    color:gold;
+    margin-bottom:20px;
+}
+</style>
+</head>
+<body>
+
+<h1>Exact IT</h1>
+
+<canvas id="wheel" width="600" height="600"></canvas>
+
+<button onclick="spin()">SPIN</button>
+
+<div id="winner"></div>
+
+<script>
+
+const options = [
+"Legend",
+"Squid",
+"Gay",
+"Bitch",
+"The most Goated IT Legend of all time",
+"Fish with no fins",
+"NOT GOOD ENOUGH ",
+"Steven",
+"Steven but with 20/20 vision",
+"Words cant even encompass how bad you are"
+];
+
+const colors=[
+"#ff595e","#ff924c","#ffca3a","#c5ca30","#8ac926",
+"#52b788","#1982c4","#4267ac","#6a4c93","#d81159"
+];
+
+const canvas=document.getElementById("wheel");
+const ctx=canvas.getContext("2d");
+
+let rotation=0;
+
+function drawWheel(){
+
+    ctx.clearRect(0,0,600,600);
+
+    const arc=(2*Math.PI)/options.length;
+
+    for(let i=0;i<options.length;i++){
+
+        const angle=rotation+i*arc;
+
+        ctx.beginPath();
+        ctx.moveTo(300,300);
+        ctx.arc(300,300,250,angle,angle+arc);
+        ctx.fillStyle=colors[i];
+        ctx.fill();
+
+        ctx.save();
+
+        ctx.translate(300,300);
+        ctx.rotate(angle+arc/2);
+
+        ctx.fillStyle="white";
+        ctx.font="18px Arial";
+        ctx.textAlign="right";
+        ctx.fillText(options[i],220,6);
+
+        ctx.restore();
+    }
+
+    // Center circle
+    ctx.beginPath();
+    ctx.arc(300,300,40,0,Math.PI*2);
+    ctx.fillStyle="#333";
+    ctx.fill();
+
+    // Pointer
+    ctx.fillStyle="red";
+    ctx.beginPath();
+    ctx.moveTo(300,20);
+    ctx.lineTo(285,55);
+    ctx.lineTo(315,55);
+    ctx.fill();
+}
+
+drawWheel();
+
+function spin(){
+
+    const extra=Math.random()*360+1800;
+
+    const start=rotation;
+    const end=rotation+(extra*Math.PI/180);
+
+    const duration=5000;
+    const startTime=performance.now();
+
+    function animate(now){
+
+        const progress=Math.min((now-startTime)/duration,1);
+        const ease=1-Math.pow(1-progress,3);
+
+        rotation=start+(end-start)*ease;
+
+        drawWheel();
+
+        if(progress<1){
+            requestAnimationFrame(animate);
+        }else{
+
+            const arc=(2*Math.PI)/options.length;
+
+            const adjusted=(2*Math.PI-(rotation%(2*Math.PI))+Math.PI/2)%(2*Math.PI);
+
+            const winner=Math.floor(adjusted/arc)%options.length;
+
+            document.getElementById("winner").innerHTML=
+            "YOU are : <b>"+options[winner]+"</b>";
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+</script>
+
+</body>
+</html>
