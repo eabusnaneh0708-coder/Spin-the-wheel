@@ -94,10 +94,35 @@ function drawWheel(){
         ctx.translate(300,300);
         ctx.rotate(angle+arc/2);
 
-        ctx.fillStyle="white";
-        ctx.font="18px Arial";
-        ctx.textAlign="right";
-        ctx.fillText(options[i],220,6);
+       ctx.fillStyle = "white";
+ctx.font = "bold 16px Arial";
+ctx.textAlign = "center";
+ctx.textBaseline = "middle";
+
+const maxWidth = 160;
+const words = options[i].split(" ");
+let lines = [];
+let currentLine = "";
+
+for (let word of words) {
+    let testLine = currentLine ? currentLine + " " + word : word;
+
+    if (ctx.measureText(testLine).width > maxWidth) {
+        lines.push(currentLine);
+        currentLine = word;
+    } else {
+        currentLine = testLine;
+    }
+}
+
+lines.push(currentLine);
+
+const lineHeight = 18;
+const startY = -(lines.length - 1) * lineHeight / 2;
+
+for (let j = 0; j < lines.length; j++) {
+    ctx.fillText(lines[j], 165, startY + j * lineHeight);
+}
 
         ctx.restore();
     }
@@ -109,12 +134,13 @@ function drawWheel(){
     ctx.fill();
 
     // Pointer
-    ctx.fillStyle="red";
-    ctx.beginPath();
-    ctx.moveTo(300,20);
-    ctx.lineTo(285,55);
-    ctx.lineTo(315,55);
-    ctx.fill();
+// Pointer (bottom)
+ctx.fillStyle = "red";
+ctx.beginPath();
+ctx.moveTo(300,580);
+ctx.lineTo(285,545);
+ctx.lineTo(315,545);
+ctx.fill();
 }
 
 drawWheel();
